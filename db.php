@@ -2,8 +2,8 @@
 
 $host = "localhost";
 $user = "root";
-$pass = "root";
-$db_name = "chit";
+$pass = "";
+$db_name = "ifs_itcrowd_updates";
 
 $con = new mysqli($host, $user, $pass, $db_name);
 

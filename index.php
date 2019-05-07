@@ -1,6 +1,23 @@
-<?php
+<?php session_start();
 include 'db.php';
-?>
+
+if(empty($_SESSION['username'])) {
+  $username = ""; 
+  ?><script>alert("you need to be logged in to access the system");location="login.php";</script><?php
+}
+
+elseif(isset($_SESSION['username']) && !empty($_SESSION['username'])){
+  $username=$_SESSION['username'];
+
+  $rs = mysqli_query($con, "SELECT * FROM users WHERE username = '$username'")or die(mysqli_error($con));
+
+    while($row = mysqli_fetch_array($rs)){
+       $sig = $row['id']; //sig for signature 
+       $username = $row['username'];
+       $password = $row['password'];
+       $fullname = $row['fullname'];
+    }
+} ?>
 
 <!DOCTYPE html>
 <html>
@@ -33,22 +50,23 @@ include 'db.php';
 <body onload="ajax();">
    
     <div id="container">
+        <form method="post" action="index.php">
+            <textarea name="message" placeholder="enter message"></textarea>
+            <input type="submit" name="submit" value="send it"/>
+        </form>
+        <br>
+        <a href="logout.php">Log me out</a>
         <div id="chat_box"> 
         <div id="chat"></div>           
         </div>
-        <form method="post" action="index.php">
-            <input type="text" name="name" placeholder="enter name"/>
-            <textarea name="message" placeholder="enter message"></textarea>
-            <input type="submit" name="submit" value="send it"/>
-            
-        </form>
+        
          
          <?php
         if(isset($_POST['submit'])) {
-        $name = $_POST['name'];
+
         $message = $_POST['message'];
             
-           $query = "INSERT INTO chit (name, message) values('$name','$message')";
+           $query = "INSERT INTO chats (sender, message) values('$sig','$message')";
             
             $run = $con->query($query);
             
